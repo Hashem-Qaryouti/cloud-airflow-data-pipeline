@@ -23,6 +23,17 @@ jobs:
       - name: Deploy code to GCP VM
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_HOST }} << 'EOF'
-            cd /home/learning_subscriptions25/airflow
-            git pull origin main
+            # Set project folder
+            PROJ_DIR=/home/learning_subscriptions25/cloud-airflow-project
+
+            # Create parent folder if it doesn't exist
+            mkdir -p "$(dirname "$PROJ_DIR")"
+
+            # Clone repo if folder doesn't exist, otherwise pull updates
+            if [ ! -d "$PROJ_DIR/.git" ]; then
+              git clone git@github.com:<username>/<repo>.git "$PROJ_DIR"
+            else
+              cd "$PROJ_DIR"
+              git pull origin main
+            fi
           EOF

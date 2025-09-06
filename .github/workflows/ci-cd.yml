@@ -1,0 +1,31 @@
+name: CI/CD for Airflow on GCP
+
+on:
+  push:
+    branches:
+      - main   # triggers when code is pushed to main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.GCP_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.GCP_VM_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy code to GCP VM
+        run: |
+          ssh -i ~/.ssh/id_rsa ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_HOST }} << 'EOF'
+            cd /home/learning_subscriptions25/airflow
+            git pull origin main
+            cd docker
+            docker-compose down
+            docker-compose up -d --build
+          EOF

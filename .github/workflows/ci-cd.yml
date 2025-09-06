@@ -26,7 +26,8 @@ jobs:
           ssh -i ~/.ssh/id_rsa ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_HOST }} << 'EOF'
             # Set project folder
             PROJ_DIR=/home/learning_subscriptions25/cloud-airflow-project
-
+            AIRFLOW_DIR=/home/learning_subscriptions25/airflow
+            
             # Create parent folder if it doesn't exist
             mkdir -p "$(dirname "$PROJ_DIR")"
 
@@ -37,4 +38,5 @@ jobs:
               cd "$PROJ_DIR"
               git pull origin main
             fi
+            cp -r $PROJ_DIR/dags/* $AIRFLOW_DIR/dags/
           EOF

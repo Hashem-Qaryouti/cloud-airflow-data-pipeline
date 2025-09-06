@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Install Docker on GCP Virtual Machine
 #1.  Add Docker's official GPG key:
 sudo apt-get update
@@ -19,3 +20,5 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 
 #4. Verify the installation
 sudo docker run hello-world
+
+# Install Apache Airflow

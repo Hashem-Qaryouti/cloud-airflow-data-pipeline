@@ -19,6 +19,7 @@ jobs:
           echo "${{ secrets.GCP_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.GCP_VM_HOST }} >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_rsa learning_subscriptions25@34.32.124.224
 
       - name: Deploy code to GCP VM
         run: |

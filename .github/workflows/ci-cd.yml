@@ -25,7 +25,4 @@ jobs:
           ssh -i ~/.ssh/id_rsa ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_HOST }} << 'EOF'
             cd /home/learning_subscriptions25/airflow
             git pull origin main
-            cd docker
-            docker-compose down
-            docker-compose up -d --build
           EOF

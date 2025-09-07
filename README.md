@@ -66,4 +66,4 @@ cloud-airflow-data-pipeline/
 
 * GitHub Actions deploys automatically.
 
-* Check Airflow UI (http://<vm-ip>:8080) for new DAGs.
+* Check Airflow UI (http://\<vm-ip>\:8080) for new DAGs.

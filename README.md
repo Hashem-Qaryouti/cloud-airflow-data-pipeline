@@ -68,4 +68,4 @@ cloud-airflow-data-pipeline/
 
 * Check Airflow UI (http://\<vm-ip>\:8080) for new DAGs.
 
-![Alt text](\assets\images\demo_dag.png)
+![Alt text](assets/images/demo_dag.png)

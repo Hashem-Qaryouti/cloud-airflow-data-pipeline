@@ -19,14 +19,14 @@ jobs:
           echo "${{ secrets.GCP_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.GCP_VM_HOST }} >> ~/.ssh/known_hosts
-          ssh -i ~/.ssh/id_rsa learning_subscriptions25@34.32.41.160
+          ssh -i ~/.ssh/id_rsa ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_HOST }}
 
       - name: Deploy code to GCP VM
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_HOST }} << 'EOF'
             # Set project folder
-            PROJ_DIR=/home/learning_subscriptions25/cloud-airflow-data-pipeline
-            AIRFLOW_DIR=/home/learning_subscriptions25/airflow
+            PROJ_DIR=/home/${{ secrets.GCP_VM_USER }}/cloud-airflow-data-pipeline
+            AIRFLOW_DIR=/home/${{ secrets.GCP_VM_USER }}/airflow
 
             # Create parent folder if it doesn't exist
             mkdir -p "$(dirname "$PROJ_DIR")"

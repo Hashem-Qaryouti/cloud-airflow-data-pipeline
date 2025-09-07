@@ -1,7 +1,7 @@
 # A Data Pipeline using Apache Airflow Hosted on Google Cloud Platform Virtual Machine
 
 
-## Architecture
+## 🚀 Architecture
 1. Developer pushes code -> GitHub Repo.
 2. GitHub Actions workflow (`.github/workflows/ci-cd.yml`) runs.
 3. Workflow connected to the GCP VM via SSH.
@@ -9,7 +9,7 @@
 5. DAGs are copied into the Airflow instance (`~/airflow/dags`).
 6. Airflow automatically loads new/updated DAGs.
 
-## Setup
+## ⚙️ Setup
 1. Prerequisites
     * Google Cloud Platform (GCP) account.
     * A running Ubuntu VM instance in GCP
@@ -47,7 +47,7 @@
     * `GCP_VM_HOST` = \<your-vm-ip\>
     * `GCP_VM_USER` = \<your-vm-username\>
 
-📂 Repository Structure
+## 📂 Repository Structure
 ```
 cloud-airflow-data-pipeline/
 │── dags/               # Airflow DAGs
@@ -58,7 +58,7 @@ cloud-airflow-data-pipeline/
 │── .github/workflows/  # CI/CD definitions
 
 ```
-▶️ Usage
+## ▶️ Usage
 
 * Add new DAGs to dags/ folder.
 

@@ -27,12 +27,12 @@ chmod +x ./scripts/setup_vm.sh
 ./scripts/setup_vm.sh
 ```  
 This will:
-    * Install Docker Engine and Docker Compose
-    * Download Airflow 3.0.6 docker-compose.yaml.
-    * Creates folders (`/dags`, `./plugins`, `/logs`).
-    * Initialize Airflow and start services.
+    * Install Docker Engine and Docker Compose\
+    * Download Airflow 3.0.6 docker-compose.yaml.\
+    * Creates folders (`/dags`, `./plugins`, `/logs`).\
+    * Initialize Airflow and start services.\
 
-After installation, open Airflow UI in your browser:
+After installation, open Airflow UI in your browser:\
 `http://<your-vm-external-ip>:8080`
 
 3. Setup SSH Keys for CI/CD

@@ -34,6 +34,7 @@
 
     - After installation, open Airflow UI in your browser:
     `http://<your-vm-external-ip>:8080`
+![Alt text](assets/images/demo_dag.png)
 
 3. Setup SSH Keys for CI/CD
     - On your local machine:\
@@ -68,4 +69,4 @@ cloud-airflow-data-pipeline/
 
 * Check Airflow UI (http://\<vm-ip>\:8080) for new DAGs.
 
-![Alt text](assets/images/demo_dag.png)
+

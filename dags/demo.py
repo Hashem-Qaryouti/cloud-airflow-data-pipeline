@@ -13,7 +13,7 @@ default_args = {
 
 # Define the DAG
 with DAG(
-    dag_id='demp_dag',
+    dag_id='demo_dag',
     default_args=default_args,
     description='A simple example DAG',
     schedule='@daily',  # runs daily

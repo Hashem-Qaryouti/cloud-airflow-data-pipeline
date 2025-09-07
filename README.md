@@ -19,9 +19,9 @@
     * GitHub Repository with you DAGs and pipeline code.
 
 2. Install Docker & Airflow on the VM
-    - SSH into your VM:\
+    - SSH into your VM:
     `ssh <your-username>@<your-vm-external-ip>` \
-    Then run the installation script:
+    - Then run the installation script:
     ```
     chmod +x ./scripts/setup_vm.sh
     ./scripts/setup_vm.sh
@@ -32,7 +32,7 @@
         * Creates folders (`/dags`, `./plugins`, `/logs`).
         * Initialize Airflow and start services.
 
-    After installation, open Airflow UI in your browser:\
+    - After installation, open Airflow UI in your browser:
     `http://<your-vm-external-ip>:8080`
 
 3. Setup SSH Keys for CI/CD

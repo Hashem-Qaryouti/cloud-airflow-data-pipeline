@@ -15,9 +15,10 @@ jobs:
 
       - name: Setup SSH key
         run: |
-          ls -ld ~/.ssh
+          SSH_DIR="/home/runner/.ssh"
+          mkdir -p "$SSH_DIR"
+          chmod 700 "$SSH_DIR"
 
-          mkdir -p ~/.ssh
           echo "${{ secrets.GCP_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.GCP_VM_HOST }} >> ~/.ssh/known_hosts

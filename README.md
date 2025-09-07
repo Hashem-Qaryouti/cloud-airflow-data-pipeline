@@ -20,7 +20,7 @@
 
 2. Install Docker & Airflow on the VM
     - SSH into your VM:
-    `ssh <your-username>@<your-vm-external-ip>` \
+    `ssh <your-username>@<your-vm-external-ip>` 
     - Then run the installation script:
     ```
     chmod +x ./scripts/setup_vm.sh
@@ -36,13 +36,13 @@
     `http://<your-vm-external-ip>:8080`
 
 3. Setup SSH Keys for CI/CD
-On your local machine:
-`ssh-keygen -t rsa -b 4096 -C "your_email@example.com"` \
+- On your local machine:
+`ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`
 
 * `id_rsa` → private key (add as GitHub secret: `GCP_SSH_KEY`).
 * `id_rsa.pub` → public key (add to VM: `~/.ssh/authorized_keys`).
 
-Also add the following GitHub repo secrets:
+- Also add the following GitHub repo secrets:
 
 * 'GCP_VM_HOST' = <your-vm-ip>
 * 'GCP_VM_USER' = <your-vm-username>

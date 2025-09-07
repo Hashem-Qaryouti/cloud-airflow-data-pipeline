@@ -36,7 +36,7 @@
     `http://<your-vm-external-ip>:8080`
 
 3. Setup SSH Keys for CI/CD
-- On your local machine:
+- On your local machine:\
 `ssh-keygen -t rsa -b 4096 -C "your_email@example.com"`
 
 * `id_rsa` → private key (add as GitHub secret: `GCP_SSH_KEY`).
@@ -44,5 +44,5 @@
 
 - Also add the following GitHub repo secrets:
 
-* 'GCP_VM_HOST' = <your-vm-ip>
-* 'GCP_VM_USER' = <your-vm-username>
+* `GCP_VM_HOST` = <your-vm-ip>
+* `GCP_VM_USER` = <your-vm-username>

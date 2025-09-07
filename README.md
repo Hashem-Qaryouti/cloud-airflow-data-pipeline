@@ -46,3 +46,24 @@
 
     * `GCP_VM_HOST` = \<your-vm-ip\>
     * `GCP_VM_USER` = \<your-vm-username\>
+
+📂 Repository Structure
+```
+cloud-airflow-data-pipeline/
+│── dags/               # Airflow DAGs
+│── plugins/            # Airflow custom plugins
+│── scripts/            # Helper scripts
+│── docker-compose.yml  # Docker setup for Airflow
+│── install_airflow.sh  # Setup script for Docker + Airflow
+│── .github/workflows/  # CI/CD definitions
+
+```
+▶️ Usage
+
+* Add new DAGs to dags/ folder.
+
+* Push changes to main branch.
+
+* GitHub Actions deploys automatically.
+
+* Check Airflow UI (http://<vm-ip>:8080) for new DAGs.

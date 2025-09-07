@@ -20,9 +20,12 @@
 
 2. Install Docker & Airflow on the VM
 SSH into your VM:
-`ssh <your-username>@<your-vm-external-ip>`
+`ssh <your-username>@<your-vm-external-ip>` \
 Then run the installation script:
-`dd`
+```
+chmod +x ./scripts/setup_vm.sh
+./scripts/setup_vm.sh
+```  
 This will:
     * Install Docker Engine and Docker Compose
     * Download Airflow 3.0.6 docker-compose.yaml.

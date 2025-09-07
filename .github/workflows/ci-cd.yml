@@ -15,13 +15,15 @@ jobs:
 
       - name: Setup SSH key
         run: |
-          SSH_DIR="/home/runner/.ssh"
+          SSH_DIR="$HOME/.ssh"
           mkdir -p "$SSH_DIR"
           chmod 700 "$SSH_DIR"
 
-          echo "${{ secrets.GCP_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.GCP_VM_HOST }} >> ~/.ssh/known_hosts
+          # Use printf to preserve newlines in the private key
+          printf "%s\n" "${{ secrets.GCP_SSH_KEY }}" > "$SSH_DIR/id_rsa"
+          chmod 600 "$SSH_DIR/id_rsa"
+
+          ssh-keyscan -H "${{ secrets.GCP_VM_HOST }}" >> "$SSH_DIR/known_hosts"
 
       - name: Deploy code to GCP VM
         run: |

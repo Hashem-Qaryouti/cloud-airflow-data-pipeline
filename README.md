@@ -44,5 +44,5 @@
 
 - Also add the following GitHub repo secrets:
 
-* `GCP_VM_HOST` = <your-vm-ip>
-* `GCP_VM_USER` = <your-vm-username>
+* `GCP_VM_HOST` = \<your-vm-ip\>
+* `GCP_VM_USER` = \<your-vm-username\>

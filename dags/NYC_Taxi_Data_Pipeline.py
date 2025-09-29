@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import requests
 import paths
 
+DEBUG = True
 BUCKET_NAME = Variable.get("BUCKET_NAME")
 BUCKET_RAW_DATA_FOLDER= paths.BUCKET_RAW_DATA_FOLDER
 
@@ -52,6 +53,14 @@ def download_green_taxi_data():
             data=response.content,
         )
 
+def check_dataset_schema():
+    gcp_connection = GCSHook(gcp_conn_id="gcp_bucket_connection") 
+    files = gcp_connection.list(bucket_name=BUCKET_NAME, prefix=BUCKET_RAW_DATA_FOLDER)
+    parquet_files = [parquet_file for parquet_file in files if parquet_file.endswith(".parquet")]
+    
+    if DEBUG:
+        print(f"Batch files in the cloud {parquet_files}")
+
 # Define default args
 default_args = {
     'owner': 'airflow',
@@ -74,4 +83,9 @@ with DAG(
         task_id='download_green_taxi_data',
         python_callable=download_green_taxi_data
     )
-    download_raw_data
+    check_columns_anomalies = PythonOperator(
+        task_id='check_for_anomalies_columns_types_names',
+        python_callable=check_dataset_schema
+    )
+
+    download_raw_data >> check_columns_anomalies

@@ -3,7 +3,10 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.sdk import Variable
 from datetime import datetime, timedelta
+import pyarrow.parquet as pq
+import pandas as pd
 import requests
+import io
 import paths
 
 DEBUG = True
@@ -26,6 +29,7 @@ def download_green_taxi_data():
     """
     base_url=paths.NYC_Green_Taxi_Data_URL
     gcp_connection =  connect_2_google_cloud()
+
     today = datetime.today()
 
     for i in range(12):
@@ -65,6 +69,23 @@ def check_dataset_schema():
     
     if DEBUG:
         print(f"Batch files in the cloud {parquet_files}")
+
+    # Get schemas for all files
+    schemas = {}
+    for file in parquet_files:
+        file_bytes = gcp_connection.download(bucket_name=BUCKET_NAME, object_name=file)
+        # Read schema using PyArrow (faster than loading whole DF)
+        table = pq.read_table(io.BytesIO(file_bytes))
+        schema = {col: str(table.schema.field(col).type) for col in table.schema.names}
+        
+        schemas[file] = schema
+    
+    # Print Schemas
+    # Print schemas
+    for file, schema in schemas.items():
+        print(f"{file}")
+        for col, dtype in schema.items():
+            print(f"  {col}: {dtype}")
 
 # Define default args
 default_args = {

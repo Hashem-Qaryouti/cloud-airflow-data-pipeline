@@ -1,14 +1,16 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
+from airflow.sdk import Variable
 from datetime import datetime, timedelta
 import requests
+import paths
 
-BUCKET_NAME = 'gcp_storage_service'
-BUCKET_RAW_DATA_FOLDER='green_taxi_data'
+BUCKET_NAME = Variable.get("BUCKET_NAME")
+BUCKET_RAW_DATA_FOLDER= paths.BUCKET_RAW_DATA_FOLDER
 
 def download_green_taxi_data():    
-    """ This function downloads raw green taxi data into S3
+    """ This function downloads raw green taxi data into Google Cloud Storage
         
         Args:
             None
@@ -16,7 +18,7 @@ def download_green_taxi_data():
         Return:
             None
     """
-    base_url='https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_'
+    base_url=paths.NYC_Green_Taxi_Data_URL
     gcs = GCSHook(gcp_conn_id="gcp_bucket_connection") 
     today = datetime.today()
 

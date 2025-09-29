@@ -114,7 +114,7 @@ def check_dataset_schema():
                 handle_missing_columns(col, missing_files, df_dict)
             else:
                 # Type mismatch
-                handle_type_mismatch(col, types)
+                handle_type_mismatch(col, types, df_dict)
 
     final_df = pd.concat(df_dict.values(), ignore_index=True)
     save_processed_dataframe_to_gcp(dataframe=final_df,
@@ -129,8 +129,15 @@ def handle_missing_columns(col, missing_files,df_dict):
             df[col] = pd.NA
             print(f"Added missing column '{col}' with NaN in {file}")
 
-def handle_type_mismatch():
-    pass
+def handle_type_mismatch(col, types, df_dict):
+    """ Cast mismatched column types to a common type (default: string)
+    """
+    for dtype, files in types.items():
+        for file in files:
+            df = df_dict[file]
+            if col in df.columns:
+                df[col] = df[col].astype(str)
+                print(f"Converted {col} in {file} from {dtype} to string")
 
 def save_processed_dataframe_to_gcp(dataframe: pd.DataFrame,
                                     bucket_name:str,

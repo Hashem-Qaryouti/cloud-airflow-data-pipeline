@@ -73,7 +73,10 @@ def check_dataset_schema():
     # Get schemas for all files
     schemas = {}
     for file in parquet_files:
-        file_bytes = gcp_connection.download(bucket_name=BUCKET_NAME, object_name=file)
+        try:
+            file_bytes = gcp_connection.download(bucket_name=BUCKET_NAME, object_name=file)
+        except Exception as e:
+            print(f"[check_dataset_schema]\t Unable to download files from the cloud")
         # Read schema using PyArrow (faster than loading whole DF)
         table = pq.read_table(io.BytesIO(file_bytes))
         schema = {col: str(table.schema.field(col).type) for col in table.schema.names}

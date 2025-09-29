@@ -16,7 +16,7 @@ BUCKET_RAW_DATA_FOLDER= paths.BUCKET_RAW_DATA_FOLDER
 def connect_2_google_cloud():
     """ This funciton connects to google cloud platform using airflow connections
     """
-    return GCSHook(GCSHook(gcp_conn_id="gcp_bucket_connection"))
+    return GCSHook(gcp_conn_id="gcp_bucket_connection")
 
 def download_green_taxi_data():    
     """ This function downloads raw green taxi data into Google Cloud Storage
@@ -28,7 +28,7 @@ def download_green_taxi_data():
             None
     """
     base_url=paths.NYC_Green_Taxi_Data_URL
-    gcp_connection =  connect_2_google_cloud()
+    gcp_connection = connect_2_google_cloud()
 
     today = datetime.today()
 

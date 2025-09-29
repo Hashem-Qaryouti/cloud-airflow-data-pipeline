@@ -10,6 +10,11 @@ DEBUG = True
 BUCKET_NAME = Variable.get("BUCKET_NAME")
 BUCKET_RAW_DATA_FOLDER= paths.BUCKET_RAW_DATA_FOLDER
 
+def connect_2_google_cloud():
+    """ This funciton connects to google cloud platform using airflow connections
+    """
+    return GCSHook(GCSHook(gcp_conn_id="gcp_bucket_connection"))
+
 def download_green_taxi_data():    
     """ This function downloads raw green taxi data into Google Cloud Storage
         
@@ -20,7 +25,7 @@ def download_green_taxi_data():
             None
     """
     base_url=paths.NYC_Green_Taxi_Data_URL
-    gcs = GCSHook(gcp_conn_id="gcp_bucket_connection") 
+    gcp_connection =  connect_2_google_cloud()
     today = datetime.today()
 
     for i in range(12):
@@ -34,7 +39,7 @@ def download_green_taxi_data():
         blob_name = f"{BUCKET_RAW_DATA_FOLDER}/green_tripdata_{year}-{month}.parquet"
 
         # Skip if file already exists (avoid duplicates)
-        if gcs.exists(bucket_name=BUCKET_NAME, object_name=blob_name):
+        if gcp_connection.exists(bucket_name=BUCKET_NAME, object_name=blob_name):
             print(f"{blob_name} already exists, skipping")
             continue
 
@@ -47,14 +52,14 @@ def download_green_taxi_data():
 
         # Upload to GCS
         print(f"Uploading to gs://{BUCKET_NAME}/{blob_name}")
-        gcs.upload(
+        gcp_connection.upload(
             bucket_name=BUCKET_NAME,
             object_name=blob_name,
             data=response.content,
         )
 
 def check_dataset_schema():
-    gcp_connection = GCSHook(gcp_conn_id="gcp_bucket_connection") 
+    gcp_connection = connect_2_google_cloud() 
     files = gcp_connection.list(bucket_name=BUCKET_NAME, prefix=BUCKET_RAW_DATA_FOLDER)
     parquet_files = [parquet_file for parquet_file in files if parquet_file.endswith(".parquet")]
     

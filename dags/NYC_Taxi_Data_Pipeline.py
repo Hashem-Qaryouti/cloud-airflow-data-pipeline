@@ -63,6 +63,9 @@ def download_green_taxi_data():
         )
 
 def check_dataset_schema():
+    """ This function checks for anomalies in column names or types.
+        Then, and based on the anomaly types, they should be handled correclty  
+    """
     gcp_connection = connect_2_google_cloud() 
     files = gcp_connection.list(bucket_name=BUCKET_NAME, prefix=BUCKET_RAW_DATA_FOLDER)
     parquet_files = [parquet_file for parquet_file in files if parquet_file.endswith(".parquet")]
@@ -72,6 +75,7 @@ def check_dataset_schema():
 
     # Get schemas for all files
     schemas = {}
+    df_dict = {}
     for file in parquet_files:
         try:
             file_bytes = gcp_connection.download(bucket_name=BUCKET_NAME, object_name=file)
@@ -82,13 +86,71 @@ def check_dataset_schema():
         schema = {col: str(table.schema.field(col).type) for col in table.schema.names}
         
         schemas[file] = schema
+
+        # Load all DataFrames at once
+        df_dict[file] = table.to_pandas()
     
-    # Print Schemas
     # Print schemas
     for file, schema in schemas.items():
         print(f"{file}")
         for col, dtype in schema.items():
             print(f"  {col}: {dtype}")
+    
+    # Compare schemas to find anomalies
+    all_columns = set().union(*[s.keys() for s in schemas.values()])
+
+    print("\n--- ANOMALIES ---")
+    for col in all_columns:
+        types = {}
+        for file, schema in schemas.items():
+            dtype = schema.get(col, "MISSING")
+            types.setdefault(dtype, []).append(file)
+        
+        if len(types) > 1:  # mismatch found
+            # Check if anomaly is only MISSING
+            if "MISSING" in types and len(types) == 2:  
+                # Only one other type and some missing → treat as missing column
+                missing_files = types["MISSING"]
+                handle_missing_columns(col, missing_files, df_dict)
+            else:
+                # Type mismatch
+                handle_type_mismatch(col, types)
+
+    final_df = pd.concat(df_dict.values(), ignore_index=True)
+    save_processed_dataframe_to_gcp(dataframe=final_df,
+                                    bucket_name=BUCKET_NAME,
+                                    object_name=paths.processed_data_path,
+                                    gcp_connection=gcp_connection)
+
+def handle_missing_columns(col, missing_files,df_dict):
+    for file in missing_files:
+        df = df_dict[file]
+        if col not in df.columns:
+            df[col] = pd.NA
+            print(f"Added missing column '{col}' with NaN in {file}")
+
+def handle_type_mismatch():
+    pass
+
+def save_processed_dataframe_to_gcp(dataframe: pd.DataFrame,
+                                    bucket_name:str,
+                                    object_name:str,
+                                    gcp_connection:str):
+    try:
+        csv_buffer = io.StringIO()
+        dataframe.to_csv(csv_buffer, index=False)
+
+        gcp_connection.upload(
+            bucket_name=BUCKET_NAME,
+            object_name=object_name,
+            data=csv_buffer.getvalue(),
+            mime_type="text/csv"
+        )
+        if DEBUG:
+            print(f"Dataframe saved to the cloud: {bucket_name}/{object_name}")
+        
+    except Exception as e:
+        print(f"Failed to upload CSV to the cloud: {e}")
 
 # Define default args
 default_args = {
@@ -116,5 +178,6 @@ with DAG(
         task_id='check_for_anomalies_columns_types_names',
         python_callable=check_dataset_schema
     )
+    
 
     download_raw_data >> check_columns_anomalies

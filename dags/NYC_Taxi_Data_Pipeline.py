@@ -182,7 +182,7 @@ def save_processed_df_to_bigquery(dataframe: pd.DataFrame,
         Return:
             None
     """
-    big_query_hook = BigQueryHook(gcp_connection=gcp_connection, use_legacy_sql=False)
+    big_query_hook = BigQueryHook(gcp_conn_id=gcp_connection, use_legacy_sql=False)
 
     # Upload pandas DataFrame to BigQuery
     big_query_hook.insert_rows_dataframe(

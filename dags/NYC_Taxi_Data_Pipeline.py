@@ -2,6 +2,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.sdk import Variable
+from airflow.providers.google.cloud.hooks.bigquery import BigQueryHook
 from datetime import datetime, timedelta
 import pyarrow.parquet as pq
 import pandas as pd
@@ -117,10 +118,17 @@ def check_dataset_schema():
                 handle_type_mismatch(col, types, df_dict)
 
     final_df = pd.concat(df_dict.values(), ignore_index=True)
+    # Save data to Google Cloud Storage
     save_processed_dataframe_to_gcp(dataframe=final_df,
                                     bucket_name=BUCKET_NAME,
                                     object_name=paths.processed_data_path,
                                     gcp_connection=gcp_connection)
+    # Save data to Google Cloud BigQuery
+    save_processed_df_to_bigquery(dataframe=final_df,
+                                  dataset_id=Variable.get("dataset_id"),
+                                  table_id=Variable.get("table_id"),
+                                  gcp_connection=gcp_connection)
+    
 
 def handle_missing_columns(col, missing_files,df_dict):
     for file in missing_files:
@@ -158,6 +166,35 @@ def save_processed_dataframe_to_gcp(dataframe: pd.DataFrame,
         
     except Exception as e:
         print(f"Failed to upload CSV to the cloud: {e}")
+
+def save_processed_df_to_bigquery(dataframe: pd.DataFrame,
+                                  dataset_id: str,
+                                  table_id:str,
+                                  gcp_connection:str):
+    """ This function saves final dataset to GCP BigQuery for further analysis
+
+        Args:
+            dataframe (pd.DataFrame): represents the processed dataframe
+            dataset_id (str): represents the dataset id in Google Query
+            table_id (str): represents the table id/name to save data
+            gcp_connection (str): represents GCP connection object
+
+        Return:
+            None
+    """
+    big_query_hook = BigQueryHook(gcp_connection=gcp_connection, use_legacy_sql=False)
+
+    # Upload pandas DataFrame to BigQuery
+    big_query_hook.insert_rows_dataframe(
+        dataset_id=dataset_id,
+        table_id=table_id,
+        rows=dataframe,
+        project_id=None,
+        chunk_size=5000,
+        replace=True
+    )
+    if DEBUG:
+        print(f"DataFrame saved to BigQuery: {dataset_id}.{table_id}")
 
 # Define default args
 default_args = {

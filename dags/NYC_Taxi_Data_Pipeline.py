@@ -127,7 +127,7 @@ def check_dataset_schema():
     save_processed_df_to_bigquery(dataframe=final_df,
                                   dataset_id=Variable.get("dataset_id"),
                                   table_id=Variable.get("table_id"),
-                                  gcp_connection=gcp_connection)
+                                  gcp_connection="gcp_bucket_connection")
     
 
 def handle_missing_columns(col, missing_files,df_dict):
